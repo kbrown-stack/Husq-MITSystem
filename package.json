@@ -1,0 +1,17 @@
+{
+  "name": "hus-machine-inventory-tracking-system",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Brown",
+  "license": "ISC",
+  "description": "Husq Machine Inventory & Tracking System with MVC Architecture",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  }
+}
