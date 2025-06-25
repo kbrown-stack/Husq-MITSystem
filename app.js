@@ -16,6 +16,9 @@ const userRoutes = require('./routes/users');
 const app = express();
 const PORT = process.env.PORT || 8080
 
+// Connect to MongoDB
+require('./config/database');
+
 // To secure the middleware on the Express.
 app.use(helmet());
 app.use(cors());
@@ -33,9 +36,36 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb'}));
 app.use(express.urlencoded({ extended: true}));
 
+//Routes Below 
+
+app.use('/api/auth', authRoutes);
+app.use('/api/machines', machineRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/users', userRoutes)
+
+
+// To check Health check point 
+
+app.get('/api/health', (req,res) => {
+    res.json({status: 'OK', Timestamp: new Date().toISOString()})
+});
+
+// To check for error handling midlleware
+
+app.use((err,req,res,next) => {
+    console.error(err.stack);
+    res.status(500).json({
+        success: false,
+        messsage: 'Something went wrong',
+        error: process.env.NODE_ENV === 'development' ? err.messsage : undefined
+
+    });
+});
+
 
 // Staring the application server 
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
+
