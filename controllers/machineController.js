@@ -6,6 +6,9 @@ const Machine = require('../models/Machine');
 const MaintenanceLog = require('../models/MaintenanceLog');
 
 const machineController = {
+
+    // CREATE MACHINE
+    
     createMachine: async (req,res) => {  // This helps to create the machine.
         try {
             const errors = validationResult(req);
@@ -59,6 +62,8 @@ const machineController = {
             });
         }
     },
+
+    // GET ALL MACHINES
 
     getMachines: async (req,res) => { // This will help get all machines by filtering it and also have pagination for it.
         try {
@@ -133,6 +138,9 @@ const machineController = {
             });
         }
     },
+
+    //GET MACHINES BY ID
+
 getMachine: async (req,res) => {  // This helps to get a single machine or device by ID.
     try {
         const machine = await Machine.findById(req.params.id)
@@ -170,9 +178,217 @@ getMachine: async (req,res) => {  // This helps to get a single machine or devic
             message: 'Server error while fetching the machine'
         });
     }
-}
+},
 
-};
+    // UPDATE MACHINE
+
+    updateMachine: async (req, res) => {
+        try {
+          const errors = validationResult(req);
+          if (!errors.isEmpty()) {
+            return res.status(400).json({
+              success: false,
+              message: 'Validation errors',
+              errors: errors.array()
+            });
+          }
+    
+          const updateData = {
+            ...req.body,
+            updatedBy: req.user._id
+          };
+    
+          const machine = await Machine.findByIdAndUpdate(
+            req.params.id,
+            updateData,
+            { new: true, runValidators: true }
+          )
+            .populate('createdBy', 'firstName lastName username')
+            .populate('assignedUser', 'firstName lastName username')
+            .populate('updatedBy', 'firstName lastName username');
+    
+          if (!machine) {
+            return res.status(404).json({
+              success: false,
+              message: 'Machine not found'
+            });
+          }
+    
+          res.json({
+            success: true,
+            message: 'Machine updated successfully',
+            data: { machine }
+          });
+        } catch (error) {
+          console.error('Update machine error:', error);
+          res.status(500).json({
+            success: false,
+            message: 'Server error updating machine'
+          });
+        }
+      },
+
+      // DELETE MACHINE
+
+      deleteMachine: async (req, res) => {
+        try {
+          const machine = await Machine.findByIdAndUpdate(
+            req.params.id,
+            { 
+              isActive: false,
+              updatedBy: req.user._id
+            },
+            { new: true }
+          );
+    
+          if (!machine) {
+            return res.status(404).json({
+              success: false,
+              message: 'Machine not found'
+            });
+          }
+    
+          res.json({
+            success: true,
+            message: 'Machine deleted successfully'
+          });
+        } catch (error) {
+          console.error('Delete machine error:', error);
+          res.status(500).json({
+            success: false,
+            message: 'Server error deleting machine'
+          });
+        }
+      },
+    
+
+    //ASSIGN MACHINE TO USER
+
+    assignMachine: async (req, res) => {
+        try {
+          const { userId } = req.body;
+          
+          const machine = await Machine.findByIdAndUpdate(
+            req.params.id,
+            {
+              assignedUser: userId,
+              assignedDate: new Date(),
+              status: 'in_use',
+              updatedBy: req.user._id
+            },
+            { new: true }
+          )
+            .populate('assignedUser', 'firstName lastName username');
+    
+          if (!machine) {
+            return res.status(404).json({
+              success: false,
+              message: 'Machine not found'
+            });
+          }
+    
+          res.json({
+            success: true,
+            message: 'Machine assigned successfully',
+            data: { machine }
+          });
+        } catch (error) {
+          console.error('Assign machine error:', error);
+          res.status(500).json({
+            success: false,
+            message: 'Server error assigning machine'
+          });
+        }
+      },
+
+      //UNASSIGN MACHINE TO USER
+
+      unassignMachine: async (req, res) => {
+        try {
+          const machine = await Machine.findByIdAndUpdate(
+            req.params.id,
+            {
+              assignedUser: null,
+              assignedDate: null,
+              status: 'ready',
+              updatedBy: req.user._id
+            },
+            { new: true }
+          );
+    
+          if (!machine) {
+            return res.status(404).json({
+              success: false,
+              message: 'Machine not found'
+            });
+          }
+    
+          res.json({
+            success: true,
+            message: 'Machine unassigned successfully',
+            data: { machine }
+          });
+        } catch (error) {
+          console.error('Unassign machine error:', error);
+          res.status(500).json({
+            success: false,
+            message: 'Server error unassigning machine'
+          });
+        }
+      },
+
+      // GET MACHINE STAT.
+
+      getStatistics: async (req, res) => {
+        try {
+          const stats = await Machine.aggregate([
+            { $match: { isActive: true } },
+            {
+              $group: {
+                _id: '$status',
+                count: { $sum: 1 }
+              }
+            }
+          ]);
+    
+          const typeStats = await Machine.aggregate([
+            { $match: { isActive: true } },
+            {
+              $group: {
+                _id: '$type',
+                count: { $sum: 1 }
+              }
+            }
+          ]);
+    
+          const totalMachines = await Machine.countDocuments({ isActive: true });
+          const assignedMachines = await Machine.countDocuments({ 
+            isActive: true, 
+            assignedUser: { $ne: null } 
+          });
+    
+          res.json({
+            success: true,
+            data: {
+              statusDistribution: stats,
+              typeDistribution: typeStats,
+              totalMachines,
+              assignedMachines,
+              availableMachines: totalMachines - assignedMachines
+            }
+          });
+        } catch (error) {
+          console.error('Get statistics error:', error);
+          res.status(500).json({
+            success: false,
+            message: 'Server error fetching statistics'
+          });
+        }
+      }
+    };
+
+    
+
 
 module.exports = machineController;
 

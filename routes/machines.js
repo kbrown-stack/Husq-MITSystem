@@ -23,7 +23,7 @@ router.get('/', auth, machineController.getMachines);
 // console.log('machineController.getMachine:', typeof machineController.getMachine);
 
 
-// router.get('/stats', auth, machineController.getStatistics);
+router.get('/stats', auth, machineController.getStatistics);
 
 // This is to GET single machine (WHICH BE DONE BYID)
 
@@ -75,37 +75,40 @@ router.post('/', [
 // This is to Update machine (admin/technician only) == Protected route
 
 
-// router.put('/:id', [
-//   auth,
-//   roleCheck(['admin', 'technician']),
-//   param('id').isMongoId().withMessage('Invalid machine ID')
-// ], machineController.updateMachine);
+router.put('/:id', [
+  auth,
+  roleCheck(['admin', 'technician']),
+  param('id').isMongoId().withMessage('Invalid machine ID')
+], machineController.updateMachine);
 
 
 // Delete machine (admin only) // Protected route.
 
-// router.delete('/:id', [
-//   auth,
-//   roleCheck(['admin']),
-//   param('id').isMongoId().withMessage('Invalid machine ID')
-// ], machineController.deleteMachine);
+router.delete('/:id', [
+  auth,
+  roleCheck(['admin']),
+  param('id').isMongoId().withMessage('Invalid machine ID')
+], machineController.deleteMachine);
+
 
 // Assign machine (admin/technician only) // Protected route.
 
-// router.post('/:id/assign', [
-//   auth,
-//   roleCheck(['admin', 'technician']),
-//   param('id').isMongoId().withMessage('Invalid machine ID'),
-//   body('userId').isMongoId().withMessage('Invalid user ID')
-// ], machineController.assignMachine);
+router.post('/:id/assign', [
+  auth,
+  roleCheck(['admin', 'technician']),
+  param('id').isMongoId().withMessage('Invalid machine ID'),
+  body('userId').isMongoId().withMessage('Invalid user ID')
+], machineController.assignMachine);
+
 
 // This is for machines that are not assigned. (admin/technician only)
 
-// router.post('/:id/unassign', [
-//   auth,
-//   roleCheck(['admin', 'technician']),
-//   param('id').isMongoId().withMessage('Invalid machine ID')
-// ], machineController.unassignMachine);
+router.post('/:id/unassign', [
+  auth,
+  roleCheck(['admin', 'technician']),
+  param('id').isMongoId().withMessage('Invalid machine ID')
+], machineController.unassignMachine);
+
 
 module.exports = router;
 
