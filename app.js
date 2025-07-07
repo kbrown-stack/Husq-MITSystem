@@ -36,12 +36,12 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb'}));
 app.use(express.urlencoded({ extended: true}));
 
-//Routes Below 
+//This is the Routes connected
 
 app.use('/api/auth', authRoutes);
-app.use('/api/machines', machineRoutes);
-app.use('/api/reports', reportRoutes);
-app.use('/api/users', userRoutes)
+// app.use('/api/machines', machineRoutes);
+// app.use('/api/reports', reportRoutes);
+// app.use('/api/users', userRoutes)
 
 
 // To check Health check point 
@@ -68,4 +68,3 @@ app.use((err,req,res,next) => {
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
-
