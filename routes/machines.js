@@ -15,17 +15,9 @@ router.get('/', auth, machineController.getMachines);
 
 // This is to GET  machine statistics
 
-
-// consolog to find out if they are valid functions
-
-// console.log('auth:', typeof auth);
-// console.log('roleCheck:', typeof roleCheck);
-// console.log('machineController.getMachine:', typeof machineController.getMachine);
-
-
 router.get('/stats', auth, machineController.getStatistics);
 
-// This is to GET single machine (WHICH BE DONE BYID)
+// This is to GET single machine (WHICH BE DONE BY ID)
 
 router.get('/:id', [
   auth,

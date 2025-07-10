@@ -42,7 +42,7 @@ const authController = {
                 lastName,
                 role: role || 'operator',
                 department,
-                employeeId
+                // employeeId
             });
 
             await user.save();
