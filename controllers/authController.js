@@ -91,10 +91,13 @@ const authController = {
                     errors: errors.array()
                 });
             }
-            const { username, password} = req.body;
+            const { usernameOremail, password} = req.body;
 
             const user = await User.findOne({  // This helps in finding user with email or username.
-                $or: [{ username }, { email: username }],
+                $or: [
+                    { username: usernameOremail }, 
+                    { email: usernameOremail }
+                ],
                 isActive: true
             });
 

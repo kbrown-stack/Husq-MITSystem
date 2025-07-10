@@ -75,7 +75,7 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-// To Hash password before saving 
+// To Hash password before saving (This makes the actual password invisble to detect)
 
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) 

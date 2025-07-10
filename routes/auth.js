@@ -38,7 +38,7 @@ router.post('/register', [
 // To login
 
 router.post('/login', [
-    body('username')
+    body('usernameOremail')
     .notEmpty()
     .withMessage('Username or email is required'),
     body('password')
