@@ -11,6 +11,9 @@ const generateToken = (userId) => {
 };
 
 const authController = {
+
+    // TO REGISTER USER
+
     register: async (req, res) => { // This enables you to register new user
         try {
             const errors = validationResult(req);
@@ -76,6 +79,8 @@ const authController = {
         }
     },
 
+    // To LOGIN USER
+
     login: async (req,res) => {  // This helps create login user.
         try {
             const errors = validationResult(req);
@@ -89,7 +94,7 @@ const authController = {
             const { username, password} = req.body;
 
             const user = await User.findOne({  // This helps in finding user with email or username.
-                $or: [{ username }, { email }],
+                $or: [{ username }, { email: username }],
                 isActive: true
             });
 
@@ -113,7 +118,7 @@ const authController = {
 
             const token = generateToken(user._id); // This will help generate token.
 
-            res.join({
+            res.json({
                 success: true,
                 message: 'Login successful',
                 data: {

@@ -7,8 +7,8 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true,
         trim: true,
-        minlenght: 3,
-        maxlenght: 25
+        minlength: 3,
+        maxlength: 25
     },
 
     email: {
@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        minlenght: 5
+        minlength: 5
     },
 
     firstName: {
@@ -74,5 +74,29 @@ const userSchema = new mongoose.Schema({
 
     }
 });
+
+// To Hash password before saving 
+
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) 
+        return next();
+    
+    try {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (error) {
+        next(error);
+    }
+
+})
+
+// This is to compare the password
+
+userSchema.methods.comparePassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password)
+}
+
+
 
 module.exports = mongoose.model('User', userSchema);
