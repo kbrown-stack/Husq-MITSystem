@@ -6,15 +6,18 @@ const User = require('../models/User');
 
 const auth = async (req,res, next) => {
     try {
-        const token = req.header('Authorization')?.replace('Bearer', '');
+        const authHeader = req.header('Authorization');
 
-        if (!token) {
+        if (!authHeader || !authHeader.startsWith('Bearer')) {
             return res.status(401).json({
                 success: false,
                 message: 'Access denied, No token provided.'
             });
         }
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || '');
+
+        const token = authHeader.replace('Bearer', '').trim(); // This helps extracts the token
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const user = await User.findById(decoded.userId).select('-password');
 
         if (!user || !user.isActive) {
@@ -23,9 +26,12 @@ const auth = async (req,res, next) => {
                 message: 'Invalid Token or User not active'
             })
         }
+
         req.user = user;
         next();
+        
     } catch (error) {
+        console.error('Auth Middleware Error:', error)
         res.status(401).json({
             success: false,
             message: 'Invalid Token'

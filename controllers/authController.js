@@ -2,11 +2,10 @@ const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const User = require('../models/User');
 
-const generateToken = (userId) => {
+const generateToken = (userId) => {  // this serves as the payload that helps keep the token. 
     return jwt.sign(
         { userId },
-        process.env.JWT_SECRET || 'your-secret-key',
-        { expiresIn: '24h'}
+        process.env.JWT_SECRET,{ expiresIn: '10d'}
     );
 };
 
@@ -151,11 +150,31 @@ const authController = {
 
     getProfile: async (req, res) => {  // This is helps gets the current user profile.
         try {
-            const user = await User.findById(req.user.id).select('-password');
+            const user = req.user;
 
-            res.json({
-                success: true,
-                data: { user }
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'User not found'
+                });
+
+            }
+
+            res.status(200).json({
+                success:true,
+
+                message: 'User profile fetched successfully',
+                data: {
+                    id: user._id,
+                    username: user.username,
+                    email: user.email,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    role: user.role,
+                    department: user.department,
+                    lastLogin: user.lastLogin
+
+                }
             });
 
         } catch (error) {

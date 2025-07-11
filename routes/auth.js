@@ -49,7 +49,7 @@ router.post('/login', [
 
 // Get the protected route Profile
 
-router.get('/profile', auth, authController.updateProfile);
+router.get('/profile', auth, authController.getProfile);
 
 // Update the protected profile
 
