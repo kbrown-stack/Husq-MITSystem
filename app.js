@@ -36,10 +36,10 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb'}));
 app.use(express.urlencoded({ extended: true}));
 
-//This is the Routes connected
+//This is the Mounted Routes connected to all routes as listed below.
 
 app.use('/api/auth', authRoutes);
-// app.use('/api/machines', machineRoutes);
+app.use('/api/machines', machineRoutes);
 // app.use('/api/reports', reportRoutes);
 // app.use('/api/users', userRoutes)
 
