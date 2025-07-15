@@ -26,18 +26,18 @@ const machineSchema = new mongoose.Schema({
         trim: true
     },
 
-    model: {
-        type: String,
-        required: true,
-        trim: true
-    },
+    // model: {
+    //     type: String,
+    //     required: true,
+    //     trim: true
+    // },
 
-    serialNumber: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true
-    }, 
+    // serialNumber: {
+    //     type: String,
+    //     required: true,
+    //     unique: true,
+    //     trim: true
+    // }, 
 
     specifications: {
         power: String,
@@ -56,7 +56,7 @@ const machineSchema = new mongoose.Schema({
         }]
     },
 
-    purchaseDate: {
+    builtDate: {
         type: Date,
         required: true
     },
@@ -65,14 +65,14 @@ const machineSchema = new mongoose.Schema({
         type: Date
     },
 
-    warrantyExpiry: {
-        type: Date
-    }, 
+    // warrantyExpiry: {
+    //     type: Date
+    // }, 
 
-    cost: {
-        type: Number,
-        min: 0
-    },
+    // cost: {
+    //     type: Number,
+    //     min: 0
+    // },
 
     location: {
         building: String,

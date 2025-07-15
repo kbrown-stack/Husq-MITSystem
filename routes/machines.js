@@ -5,9 +5,6 @@ const auth = require('../middleware/auth');
 const roleCheck = require('../middleware/roleCheck');
 const machineController = require('../controllers/machineController');
 
-// const router = express.Router();
-
-
 
 // This is to GET all Machines. 
 
@@ -39,27 +36,29 @@ router.post('/', [
     .trim()
     .withMessage('Machine name is required'),
   body('type')
-    .isIn([ 'Lathe', 'Mill', 'Press', 'Welder', 'Grinder', 'Drill', 'Other'])
-    .withMessage('Invalid machine type'),
+    .isIn([ 'Desktop', 'Laptop', 'Tablet', 'Mini pc', 'Other '])
+    .withMessage('Mini pc'),
+
   body('manufacturer')
     .notEmpty()
     .trim()
     .withMessage('Manufacturer is required'),
-  body('model')
+
+  body('machineId')
     .notEmpty()
     .trim()
-    .withMessage('Model is required'),
-  body('serialNumber')
+    .withMessage('machineId is required'),
+
+  body('profile')
     .notEmpty()
     .trim()
-    .withMessage('Serial number is required'),
-  body('purchaseDate')
+    .withMessage('Profile is required'),
+
+  body('builtDate')
     .isISO8601()
-    .withMessage('Purchase date must be a valid date'),
-  body('cost')
-    .optional()
-    .isNumeric()
-    .withMessage('Cost must be a number')
+    .withMessage('Built date must be a valid date'),
+
+
 ], machineController.createMachine);
 
 
