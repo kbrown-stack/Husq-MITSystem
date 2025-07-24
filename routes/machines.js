@@ -31,10 +31,12 @@ router.post('/', [
     .notEmpty()
     .trim()
     .withMessage('Machine ID is required'),
+    
   body('name')
     .notEmpty()
     .trim()
     .withMessage('Machine name is required'),
+
   body('type')
     .isIn([ 'Desktop', 'Laptop', 'Tablet', 'Mini pc', 'Other '])
     .withMessage('Mini pc'),

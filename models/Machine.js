@@ -26,6 +26,16 @@ const machineSchema = new mongoose.Schema({
         trim: true
     },
 
+    profile: {
+        type: String,
+        required: true
+    },
+
+    isActive: {
+        type: Boolean,
+        default: true
+    },
+
     // model: {
     //     type: String,
     //     required: true,
