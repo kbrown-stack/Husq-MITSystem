@@ -10,6 +10,7 @@ const machineController = require('../controllers/machineController');
 
 router.get('/', auth, machineController.getMachines);
 
+
 // This is to GET  machine statistics
 
 router.get('/stats', auth, machineController.getStatistics);
@@ -31,7 +32,7 @@ router.post('/', [
     .notEmpty()
     .trim()
     .withMessage('Machine ID is required'),
-    
+
   body('name')
     .notEmpty()
     .trim()
@@ -79,7 +80,7 @@ router.put('/:id', [
 
 router.delete('/:id', [
   auth,
-  roleCheck(['admin']),
+  roleCheck(['admin', 'technician']),
   param('id').isMongoId().withMessage('Invalid machine ID')
 ], machineController.deleteMachine);
 
