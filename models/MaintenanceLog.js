@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const maintenanceLogSchema = new mongoose.Schema({
-machine: {
+Machine: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'machine',
     required: true
@@ -32,7 +32,7 @@ description: {
 
 software: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
+    ref: 'User',
     required: true
 },
 
@@ -61,7 +61,7 @@ actualDuration: {
 
 status: {
     type: String,
-    enum: ['completed', 'in_progress'],
+    enum: [ 'scheduled','completed', 'in_progress'],
     default:'scheduled'
 },
 
