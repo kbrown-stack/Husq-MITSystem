@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 const maintenanceLogSchema = new mongoose.Schema({
-Machine: {
+machine: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'machine',
+    ref: 'Machine',
     required: true
 },
 
@@ -91,6 +91,36 @@ updatedAt: {
     default: Date.now
 }
 
-}) 
+});
+
+// The Indexes (This helps to improve and speed the process of reading and quering when searching for large colelctions in the DB)
+
+maintenanceLogSchema.index({ machine: 1, createdAt: -1 });  // This finds the logs for a particular machine and sort them out by recent once.
+maintenanceLogSchema.index({ technician: 1 }); // This speed up the query when you need to fetch logs assigned to a particular tecchnician or user.
+maintenanceLogSchema.index({ status: 1 }); // This improves perfermance when filtring maintenace status.
+maintenanceLogSchema.index({ scheduleDate: 1}); // This is for checking the scheduled event by date.
+
+
+// The Auto-update updatedAt ( This helps keeps track on when the document was last chnaged by runnung an auto updateAT in the DB)
+
+maintenanceLogSchema.pre('save', function (next) {
+    this.updatedAt = Date.now();
+    next();
+});
+
+// Auto-calculate total cost ( This calculates the total maintenance cost authomatically before saving a log.)
+
+maintenanceLogSchema.pre('save', function (next) {
+    let partsCost = 0;
+    if (this.partsUsed && this.partsUsed.length > 0) {
+        partsCost = this.partsUsed.reduce((total, part) => {
+            return total + (part.cost * part.quantity || 0);
+        }, 0);
+    }
+    this.totalCost = partsCost + (this.laborCost || 0);
+    next()
+});
+
+
 
 module.exports = mongoose.model('MaintenanceLog', maintenanceLogSchema);
