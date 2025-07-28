@@ -10,6 +10,7 @@ const authRoutes = require('./routes/auth');
 const machineRoutes = require('./routes/machines');
 const reportRoutes = require('./routes/reports');
 const userRoutes = require('./routes/users');
+const maintenanceRoutes = require('./routes/maintenance');
 
 
 // To Initialize Express
@@ -41,7 +42,8 @@ app.use(express.urlencoded({ extended: true}));
 app.use('/api/auth', authRoutes);
 app.use('/api/machines', machineRoutes);
 app.use('/api/reports', reportRoutes);
-// app.use('/api/users', userRoutes)
+app.use('/api/users', userRoutes)
+app.use('/api/maintenace', maintenanceRoutes);
 
 
 // To check Health check point 
