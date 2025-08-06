@@ -1,26 +1,27 @@
 const express = require('express');
 const { body, param } = require('express-validator');
-const auth = require('../middleware/auth');
-const roleCheck = require('../middleware/roleCheck');
+// const auth = require('../middleware/auth');
+const { verifyToken, checkRoles } = require('../middleware/auth');
+// const roleCheck = require('../middleware/roleCheck');
 const userController = require('../controllers/userController');
 // const User = require('../models/User');
 
 const router = express.Router();
 
 router.get('/', [
-  auth,
-  roleCheck(['admin'])
+  verifyToken,
+  checkRoles('admin')
 ], userController.getAllUsers);
 
 router.get('/:id', [
-  auth,
-  roleCheck(['admin']),
+  verifyToken,
+  checkRoles('admin'),
   param('id').isMongoId().withMessage('Invalid user ID')
 ], userController.getUserById);
 
 router.put('/:id/role', [
-  auth,
-  roleCheck(['admin']),
+  verifyToken,
+  checkRoles('admin'),
   param('id').isMongoId().withMessage('Invalid user ID'),
   body('role')
     .isIn(['admin', 'technician', 'operator'])
@@ -28,8 +29,8 @@ router.put('/:id/role', [
 ], userController.updateUserRole);
 
 router.delete('/:id', [
-  auth,
-  roleCheck(['admin']),
+  verifyToken,
+  checkRoles('admin'),
   param('id').isMongoId().withMessage('Invalid user ID')
 ], userController.deactivateUser);
 

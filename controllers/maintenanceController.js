@@ -2,7 +2,7 @@ const MaintenanceLog = require('../models/MaintenanceLog');
 const Machine = require('../models/Machine');
 
 const maintenaceController = {
-    createMaintenaceLog: async (req,res) => {
+    createMaintenanceLog: async (req,res) => {
         try {
             const {
                 machine,

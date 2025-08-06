@@ -33,8 +33,8 @@ const limiter = rateLimit({
 app.use(limiter);
 
 //Using the Middleware as a bodyperser. 
-
-app.use(express.json({ limit: '10mb'}));
+app.use(express.json())
+// app.use(express.json({ limit: '10mb'}));
 app.use(express.urlencoded({ extended: true}));
 
 //This is the Mounted Routes connected to all routes as listed below.

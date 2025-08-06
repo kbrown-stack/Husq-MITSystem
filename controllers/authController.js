@@ -160,9 +160,8 @@ const authController = {
 
             }
 
-            res.status(200).json({
+            res.json({
                 success:true,
-
                 message: 'User profile fetched successfully',
                 data: {
                     id: user._id,
@@ -196,7 +195,7 @@ const authController = {
                 { new: true, runValidators: true}
             ).select('-password');
 
-            res.join({
+            res.json({
                 success: true,
                 message: 'Profile updated successfully',
                 data: { user }

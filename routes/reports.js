@@ -1,7 +1,8 @@
 const express = require('express');
 const { query } = require('express-validator');
-const auth = require('../middleware/auth');
-const roleCheck = require('../middleware/roleCheck');
+// const auth = require('../middleware/auth');
+const { verifyToken, checkRoles } = require('../middleware/auth')
+// const roleCheck = require('../middleware/roleCheck');
 const reportController = require('../controllers/reportController');
 
 const router = express.Router();
@@ -9,8 +10,8 @@ const router = express.Router();
 // To Generate the inventory report
 
 router.get('/inventory', [
-    auth,
-    roleCheck(['admin', 'technician']),
+  verifyToken,
+  checkRoles('admin', 'technician'),
     query('format')
       .optional()
       .isIn(['json', 'csv', 'excel'])
@@ -20,8 +21,8 @@ router.get('/inventory', [
   // To Generate Maintenance Report
 
   router.get('/maintenance', [
-    auth,
-    roleCheck(['admin', 'technician']),
+    verifyToken,
+    checkRoles('admin', 'technician'),
     query('format')
       .optional()
       .isIn(['json', 'csv', 'excel'])
@@ -40,8 +41,8 @@ router.get('/inventory', [
   // To Generate Utilization report 
 
   router.get('/utilization', [
-    auth,
-    roleCheck(['admin', 'technician'])
+    verifyToken,
+    checkRoles('admin', 'technician')
   ], reportController.generateUtilizationReport);
 
 

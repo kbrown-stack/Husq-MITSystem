@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 const maintenanceLogSchema = new mongoose.Schema({
 machine: {
     type: mongoose.Schema.Types.ObjectId,

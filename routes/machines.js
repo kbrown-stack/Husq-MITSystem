@@ -1,24 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const { body, param } = require('express-validator');
-const auth = require('../middleware/auth');
-const roleCheck = require('../middleware/roleCheck');
+// const auth = require('../middleware/auth');
+const { verifyToken, checkRoles } = require('../middleware/auth')
+// const roleCheck = require('../middleware/roleCheck');
 const machineController = require('../controllers/machineController');
+// const { getMachine } = require('../controllers')
 
 
 // This is to GET all Machines. 
 
-router.get('/', auth, machineController.getMachines);
+router.get('/', verifyToken, machineController.getMachines);
 
 
 // This is to GET  machine statistics
 
-router.get('/stats', auth, machineController.getStatistics);
+router.get('/stats', verifyToken, machineController.getStatistics);
 
 // This is to GET single machine (WHICH BE DONE BY ID)
 
 router.get('/:id', [
-  auth,
+  verifyToken,
   param('id').isMongoId().withMessage('Invalid machine ID')
 ], machineController.getMachine);
 
@@ -26,8 +28,8 @@ router.get('/:id', [
 // This Create machine (admin/technician only) // Protected route.
 
 router.post('/', [
-  auth,
-  roleCheck(['admin', 'technician']),
+  verifyToken,
+  checkRoles('admin', 'technician'),
   body('machineId')
     .notEmpty()
     .trim()
@@ -70,8 +72,8 @@ router.post('/', [
 
 
 router.put('/:id', [
-  auth,
-  roleCheck(['admin', 'technician']),
+  verifyToken,
+  checkRoles('admin', 'technician'),
   param('id').isMongoId().withMessage('Invalid machine ID')
 ], machineController.updateMachine);
 
@@ -79,8 +81,8 @@ router.put('/:id', [
 // Delete machine (admin only) // Protected route.
 
 router.delete('/:id', [
-  auth,
-  roleCheck(['admin', 'technician']),
+  verifyToken,
+  checkRoles('admin', 'technician'),
   param('id').isMongoId().withMessage('Invalid machine ID')
 ], machineController.deleteMachine);
 
@@ -88,8 +90,8 @@ router.delete('/:id', [
 // Assign machine (admin/technician only) // Protected route.
 
 router.post('/:id/assign', [
-  auth,
-  roleCheck(['admin', 'technician']),
+  verifyToken,
+  checkRoles('admin', 'technician'),
   param('id').isMongoId().withMessage('Invalid machine ID'),
   body('userId').isMongoId().withMessage('Invalid user ID')
 ], machineController.assignMachine);
@@ -98,8 +100,8 @@ router.post('/:id/assign', [
 // This is for machines that are not assigned. (admin/technician only)
 
 router.post('/:id/unassign', [
-  auth,
-  roleCheck(['admin', 'technician']),
+  verifyToken,
+  checkRoles('admin', 'technician'),
   param('id').isMongoId().withMessage('Invalid machine ID')
 ], machineController.unassignMachine);
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
-const auth = require('../middleware/auth');
+// const auth = require('../middleware/auth');
+const { verifyToken } = require('../middleware/auth')
 const authController = require('../controllers/authController');
 
 const router = express.Router()
@@ -48,12 +49,13 @@ router.post('/login', [
 ], authController.login);
 
 // Get the protected route Profile
+console.log('typeof authController.getProfile:', typeof authController.getProfile)
 
-router.get('/profile', auth, authController.getProfile);
+router.get('/profile', verifyToken, authController.getProfile);
 
 // Update the protected profile
 
-router.put('/profile', auth, authController.updateProfile)
+router.put('/profile', verifyToken, authController.updateProfile);
 
 
 

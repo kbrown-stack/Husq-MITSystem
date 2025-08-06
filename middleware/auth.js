@@ -1,10 +1,12 @@
 
-// This file represent the Middleware of the AuthJs.
+// This file represent the Middleware of the verifyToken and Check Roles access 
 
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-const auth = async (req,res, next) => {
+// This below helps verifies the token and jwt and load the user
+
+const verifyToken = async (req,res, next) => {
     try {
         const authHeader = req.header('Authorization');
 
@@ -39,7 +41,27 @@ const auth = async (req,res, next) => {
     }
     };
 
-    module.exports = auth;
+    // This helps check the role access control
+
+    const checkRoles = (...allowedRoles) => {
+        return (req,res, next) => {
+            if (!req.user || !allowedRoles.includes(req.user.role)) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Not Allowed: You cannot have permission to perform this action'
+                });
+            }
+            next()
+        };
+    };
+
+
+
+    module.exports = {
+        verifyToken,
+        checkRoles
+    };
+
 
 
 
