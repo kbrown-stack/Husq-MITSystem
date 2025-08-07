@@ -8,7 +8,7 @@ const MaintenanceLog = require('../models/MaintenanceLog');
 
 // Create Machine
 
-const createMachine = async (req,res) => {
+const createMachine = async (req,res) => {  // This helps to create the machine.
   try {
     const machine = new Machine(req.body);
     await machine.save();

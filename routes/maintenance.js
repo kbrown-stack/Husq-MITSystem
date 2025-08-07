@@ -25,5 +25,29 @@ router.get('/',
 
 // GET MAINTENANCE LOG BY ID
 
+router.get('/:id',
+    verifyToken,
+    checkRoles('admin', 'technician'),
+    maintenanceController.getMaintenanceLogById
+);
+
+// UPDATE MAINTENANCE LOG
+
+router.put('/:id',
+    verifyToken,
+    checkRoles('admin', 'technician'),
+    maintenanceController.updateMaintenanceLog
+);
+
+// DELETE MAINTENANCE LOG
+
+router.delete('/:id',
+    verifyToken,
+    checkRoles('admin'),
+    maintenanceController.deleteMaintenanceLog
+);
+
+module.exports = router;
+
 
 
