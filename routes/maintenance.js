@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const maintenanceController = require('../controllers/maintenanceController');
 const { verifyToken, checkRoles } = require('../middleware/auth');
+const { validateMaintenanceLog, validateUpdateMaintenanceLog, validateObjectParam } = require('../middleware/validation')
 
 
 // The API for the maintnace routes is below here;
@@ -12,6 +13,7 @@ router.post(
     '/', 
     verifyToken,
     checkRoles('admin', 'technician'), // The roles here can always be changed or adjusted as needed.
+    validateMaintenanceLog,
    maintenanceController.createMaintenanceLog
 );
 
@@ -28,6 +30,7 @@ router.get('/',
 router.get('/:id',
     verifyToken,
     checkRoles('admin', 'technician'),
+    validateObjectParam,
     maintenanceController.getMaintenanceLogById
 );
 
@@ -36,6 +39,8 @@ router.get('/:id',
 router.put('/:id',
     verifyToken,
     checkRoles('admin', 'technician'),
+    validateObjectParam,
+    validateUpdateMaintenanceLog,
     maintenanceController.updateMaintenanceLog
 );
 
@@ -44,6 +49,7 @@ router.put('/:id',
 router.delete('/:id',
     verifyToken,
     checkRoles('admin'),
+    validateObjectParam,
     maintenanceController.deleteMaintenanceLog
 );
 

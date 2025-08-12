@@ -11,7 +11,8 @@ const maintenanceController = {
                 type,
                 priority,
                 description,
-                software,
+                title,
+                // software,
                 scheduleDate,
                 estimatedDuration,
 
@@ -30,7 +31,8 @@ const maintenanceController = {
                 type,
                 priority,
                 description,
-                software,
+                title,
+                // software,
                 scheduleDate,
                 estimatedDuration,
                 createdBy: req.user._id

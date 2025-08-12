@@ -1,5 +1,5 @@
 
-const roleCheck = (allowedRoles = []) => {
+const checkRoles = (allowedRoles = []) => {
     return (req,res, next) => {
         if (!req.user) {
             return res.status(401).json({
@@ -18,4 +18,4 @@ const roleCheck = (allowedRoles = []) => {
     };
 };
 
-module.exports = roleCheck;
+module.exports = checkRoles;

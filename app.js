@@ -43,7 +43,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/machines', machineRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/users', userRoutes)
-app.use('/api/maintenace', maintenanceRoutes);
+app.use('/api/maintenance', maintenanceRoutes);
 
 
 // To check Health check point 

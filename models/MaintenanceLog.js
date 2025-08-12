@@ -10,7 +10,8 @@ machine: {
 
 type: {
     type: String,
-    enum: ['reimage', 'newbuild'],
+    enum: ['MiniPC', 'Desktop', 'Other'],
+    // enum: ['reimage', 'newbuild'],
     required: true
 },
 
@@ -34,7 +35,7 @@ description: {
 software: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false
 },
 
 scheduleDate: {
