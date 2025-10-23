@@ -1,3 +1,5 @@
+// This is the schema collection for the machine.
+
 const mongoose = require('mongoose');
 
 const machineSchema = new mongoose.Schema({
@@ -69,7 +71,7 @@ const machineSchema = new mongoose.Schema({
     builtDate: {
         type: Date,
         required: true
-    },
+    }, 
 
     buildDate: {
         type: Date
@@ -119,7 +121,7 @@ const machineSchema = new mongoose.Schema({
     qrcode: {
         type: String,
         unique: true,
-        sparse: true
+        sparse: true   
     },
 
     createdBy: {

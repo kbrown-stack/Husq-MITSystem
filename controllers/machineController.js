@@ -4,115 +4,219 @@ const { validationResult } = require('express-validator');
 const QRCode =require('qrcode');
 const Machine = require('../models/Machine');
 const MaintenanceLog = require('../models/MaintenanceLog');
+const catchAsync = require('./../utils/catchAsync');
+const AppError = require('./../utils/appError');
+
+
+// Using the Catch Asycn erron function to handle the errors
+
+// const catchAsync = fn => {
+//   fn(req, res, next).catch(err => next(err))
+// }
 
 
 // Create Machine
 
-const createMachine = async (req,res) => {  // This helps to create the machine.
-  try {
-    const machine = new Machine(req.body);
-    await machine.save();
+const createMachine = catchAsync(async (req, res, next) => {  // This helps to create the machine using the global error middleware
+  const newMachine = await Machine.create(req.body);
+
+
+  // try {
+  //   const machine = new Machine(req.body);
+  //   await machine.save();
+  //   res.status(201).json({
+  //     success: true,
+  //     data: machine
+  //   });
+
+  // } catch (error) {
+  //   console.error(error); // adding to enable me console the err on the terminal.
+
+
     res.status(201).json({
-      success: true,
-      data: machine
+      status: 'success',
+      data: {
+        machine: newMachine
+      }
+      // message: 'Server error creating machine'
     });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Server error creating machine'
-    });
-  }
-};
+
+  });
+  
 
 // Get ALL Machines
-const getMachines = async (req,res) => {
-  try {
-    const machines = await Machine.find();
-    res.json({
-      success: true,
-      data: machines
-    });
+const getMachines = catchAsync(async (req, res, next) => {
+  const features = new APIFeatures(Machine.find(), req.query)
+  .filter()
+  .sort()
+  .limitFields()
+  .paginate()
 
-  } catch (error) {
-    console.error('Error getting machines:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while fetching machines'
-    })
+  const machine = await features.query;
+
+  // Sending the Response
+
+res.status(200).json({
+  status: 'success',
+  results: machine.length,
+  data: {
+    machines
   }
-};
+})
+
+  // try {
+
+    // this is example of filtering of objects from data queries. 
+
+    // const queryObj = {... req.query}; // this has the key value object that has all the folders and arrays. 
+    // const excludeFields = ['page', 'sort', 'limit', 'fields'] // this arrays of fields to exclude
+
+    // excludeFields.forEach(el => delete queryObj[el]);
+
+    // console.log(req.query, queryObj)
+///
+    // const machines = await Machine.find(req.query);
+    // res.json({
+    //   success: true,
+    //   data: machines
+    // });
+
+    // res.json({
+    //   success: true,
+    //   data: machines
+    // });
+
+
+  // } catch (error) {
+  //   console.error('Error getting machines:', error);
+  //   res.status(500).json({
+  //     success: false,
+  //     message: 'Server error while fetching machines'
+  //   })
+  // }
+
+
+});
+
+
+
+
 
 // Get Machines BY ID
 
-const getMachine = async (req,res) => {
-  try {
-    const machine = await Machine.findById(req.params.id);
-    if (!machine) {
-      return res.status(400).json({
-        success: false,
-        message: 'Machine not found'
-      });
-    }
-    res.json({
-      success: true,
-      data: machine
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Server error while fetching the machine'
-    });
+const getMachine = catchAsync(async (req, res, next) => {
+  const machine = await Machine.findById(req.params.id);
+
+  if (!machine) {
+    return next(new AppError('No machine found with this ID!', 404));
   }
-};
+
+    // Sending the Response
+  res.status(200).json({
+    status: 'success',
+    data: {
+      machine
+    }
+  });
+  
+  // try {
+  //   const machine = await Machine.findById(req.params.id);
+  //   if (!machine) {
+  //     return res.status(400).json({
+  //       success: false,
+  //       message: 'Machine not found'
+  //     });
+  //   }
+  //   res.json({
+  //     success: true,
+  //     data: machine
+  //   });
+
+  // } catch (error) {
+  //   res.status(500).json({
+  //     success: false,
+  //     message: 'Server error while fetching the machine'
+  //   });
+  // }
+});
 
 // UPDATE MACHINE
 
-const updateMachine = async (req, res) => {
-  try {
-    const machine = await Machine.findByIdAndUpdate(req.params.id, req.body, {new: true});
-    if (!machine) {
-      return res.status(400).json({
-        success: false,
-        message: 'Machine not found'
-      });
-    }
-    res.json({
-      success: true,
-      data: machine
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: true,
-      message: 'Error updating machine'
-    });
+const updateMachine = catchAsync(async (req, res, next) => {
+  const machine = await Machine.findByIdAndUpdate(req.params.id, req.body, {new: true});
+
+  if (!machine) {
+    return next(new AppError('No machine found with this ID!', 404));
   }
-};
+
+    // Sending the Response
+  res.status(200).json({
+    status: 'success',
+    data: {
+      machine
+    }
+  });
+
+  // try {
+  //   const machine = await Machine.findByIdAndUpdate(req.params.id, req.body, {new: true});
+  //   if (!machine) {
+  //     return res.status(400).json({
+  //       success: false,
+  //       message: 'Machine not found'
+  //     });
+  //   }
+  //   res.json({
+  //     success: true,
+  //     data: machine
+  //   });
+  // } catch (error) {
+  //   res.status(500).json({
+  //     success: true,
+  //     message: 'Error updating machine'
+  //   });
+  // }
+});
 
 // DELETE MACHINE
 
-const deleteMachine = async (req,res) => {
-  try {
+const deleteMachine = catchAsync(async (req,res,next) => {
 
-    const machine = await Machine.findByIdAndDelete(req.params.id);
-    if (!machine) {
-      return res.status(400).json({
-        success: false,
-        message: 'Machine not found'
-      });
+  const machine = await Machine.findByIdAndDelete(req.params.id);
 
-    }
-    res.json({
-      success: true,
-      message: 'Machine deleted successfully.'
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      success:false,
-      message: 'Server error deleting machine'
-    });
+  if (!machine) {
+    return next(new AppError('No machine found with this ID!', 404));
   }
-};
+
+    // Sending the Response
+  res.status(204).json({
+    status: 'success',
+    data: null
+  });
+
+
+
+  // try {
+
+  //   const machine = await Machine.findByIdAndDelete(req.params.id);
+  //   if (!machine) {
+  //     return res.status(400).json({
+  //       success: false,
+  //       message: 'Machine not found'
+  //     });
+
+  //   }
+  //   res.json({
+  //     success: true,
+  //     message: 'Machine deleted successfully.'
+  //   });
+
+  // } catch (error) {
+  //   res.status(500).json({
+  //     success:false,
+  //     message: 'Server error deleting machine'
+  //   });
+  // }
+});
 
 //ASSIGN MACHINE TO USER
 
@@ -193,6 +297,7 @@ module.exports = {
   unassignMachine,
   getStatistics
 }
+
 
 
 
